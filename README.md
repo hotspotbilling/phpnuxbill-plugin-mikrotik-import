@@ -1,5 +1,7 @@
 # PHPNuxBill Plugin: Mikrotik Import
 
+***UNFINISHED - STILL ON PROGRESS***
+
 Import existing Mikrotik Hotspot Package and User to PHPNuxBill
 
 # Installation
