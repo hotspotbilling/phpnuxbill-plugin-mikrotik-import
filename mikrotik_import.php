@@ -26,18 +26,23 @@ function mikrotik_import_start_ui()
     $admin = Admin::_info();
     $ui->assign('_admin', $admin);
 
+    $type = $_POST['type'];
+
     // get mikrotik info
     $mikrotik = ORM::for_table('tbl_routers')->where('name', $_POST['server'])->find_one();
-    $results = mikrotik_import_mikrotik_package($_POST['server'], $mikrotik['ip_address'], $mikrotik['username'], $mikrotik['password']);
-
-
+    if($type=='Hotspot'){
+        $results = mikrotik_import_mikrotik_hotspot_package($_POST['server'], $mikrotik['ip_address'], $mikrotik['username'], $mikrotik['password']);
+    }else if($type=='PPPOE'){
+        echo "POE";
+    }
     $ui->assign('results', $results);
     $ui->display('mikrotik_import_start.tpl');
 }
 
-function mikrotik_import_mikrotik_package($router, $ip, $user, $pass)
+function mikrotik_import_mikrotik_hotspot_package($router, $ip, $user, $pass)
 {
     $client = Mikrotik::getClient($ip, $user, $pass);
+    // import Hotspot Profile to package
     $printRequest = new RouterOS\Request(
         '/ip hotspot user profile print'
     );
@@ -97,6 +102,33 @@ function mikrotik_import_mikrotik_package($router, $ip, $user, $pass)
                 $d->save();
             }else{
                 $results[] = "Packages Exists: $name";
+            }
+        }
+    }
+    // Import user
+    $userRequest = new RouterOS\Request(
+        '/ip hotspot user print'
+    );
+    $users = $client->sendSync($userRequest)->toArray();
+    foreach ($users as $u) {
+        $username = $u->getProperty('name');
+        if(!empty($username) && !empty($u->getProperty('password'))){
+            $d = ORM::for_table('tbl_customers')->where('username', $username)->find_one();
+            if($d){
+                $results[] = "Username Exists: $username";
+            }else{
+                $d = ORM::for_table('tbl_customers')->create();
+                $d->username = $username;
+                $d->password = $u->getProperty('password');
+                $d->fullname = $username;
+                $d->address = '';
+                $d->email = $u->getProperty('email');
+                $d->phonenumber = '';
+                if ($d->save()) {
+                    $results[] = "$username added successfully";
+                }else{
+                    $results[] = "$username Failed to be added";
+                }
             }
         }
     }
