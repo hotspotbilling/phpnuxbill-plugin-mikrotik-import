@@ -4,6 +4,8 @@
 
 Import existing Mikrotik Hotspot Package and User to PHPNuxBill
 
+***This script will import Users and Profiles, but will not add active packages to user.***
+
 # Installation
 
 Copy **mikrotik_import.php** to **/system/plugin/**  
