@@ -3,7 +3,6 @@
 <form class="form-horizontal" method="post" role="form" action="{$_url}plugin/mikrotik_import_start_ui">
     <div class="row">
         <div class="col-sm-12 col-md-12">
-
             <div class="panel panel-primary panel-hovered panel-stacked mb30">
                 <div class="panel-heading">Information</div>
                 <div class="panel-body">
@@ -42,4 +41,5 @@
         </div>
     </div>
 </form>
+
 {include file="sections/footer.tpl"}
