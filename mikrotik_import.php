@@ -122,7 +122,7 @@ function mikrotik_import_mikrotik_hotspot_package($router, $ip, $user, $pass)
                 $d->password = $u->getProperty('password');
                 $d->fullname = $username;
                 $d->address = '';
-                $d->email = $u->getProperty('email');
+                $d->email = (empty($u->getProperty('email')))?'':$u->getProperty('email');
                 $d->phonenumber = '';
                 if ($d->save()) {
                     $results[] = "$username added successfully";
